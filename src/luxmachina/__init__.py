@@ -7,4 +7,4 @@ from importlib.metadata import PackageNotFoundError, version
 try:
     __version__ = version("luxmachina")
 except PackageNotFoundError:
-    __version__ = "?.?.?"
+    __version__ = "0+unknown"

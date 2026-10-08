@@ -7,4 +7,4 @@ import luxmachina
 
 
 def test_version_is_resolved():
-    assert luxmachina.__version__ != "?.?.?"
+    assert luxmachina.__version__ != "0+unknown"
