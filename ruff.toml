@@ -1,0 +1,31 @@
+line-length = 100
+target-version = "py310"
+
+[format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+docstring-code-format = true
+
+[lint]
+select = [
+    "E", "W",   # pycodestyle
+    "F",        # pyflakes
+    "I",        # isort
+    "B",        # flake8-bugbear
+    "UP",       # pyupgrade
+    "SIM",      # flake8-simplify
+    "C4",       # flake8-comprehensions
+    "NPY",      # numpy-specific rules
+    "PTH",      # prefer pathlib over os.path
+    "RUF",      # ruff-specific rules
+    "D",        # pydocstyle
+]
+ignore = [
+    "E501",     # line length is handled by the formatter
+    "D105",     # magic methods do not need docstrings
+    "D107",     # __init__ is documented at class level
+]
+
+[lint.pydocstyle]
+convention = "numpy"
