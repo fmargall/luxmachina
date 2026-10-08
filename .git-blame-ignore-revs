@@ -4,3 +4,6 @@
 #
 # Enable locally with:
 #   git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# Apply pre-commit hygiene fixes (EOF, line endings, ruff autofix)
+30078d10b38595bcfc10740a56a72ca58c544e97
