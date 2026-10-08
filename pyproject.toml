@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools >= 77", "setuptools-git-versioning >= 2.0, < 3"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "luxmachina"
+dynamic = ["version"]
+description = "Differentiable GPU light tracer for optical system design and metrology, built on NVIDIA Warp"
+authors = [
+    { name = "François Margall", email = "fr.margall@proton.me" },
+]
+keywords = [
+    "differentiable-rendering",
+    "inverse-rendering",
+    "light-tracing",
+    "ray-tracing",
+    "optics",
+    "optical-design",
+    "gpu",
+    "nvidia-warp",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+readme = "README.md"
+license = "AGPL-3.0-or-later"
+license-files = ["LICENSE.txt"]
+requires-python = ">=3.10"
+
+[project.urls]
+Homepage = "https://github.com/fmargall/luxmachina"
+Repository = "https://github.com/fmargall/luxmachina"
+Issues = "https://github.com/fmargall/luxmachina/issues"
+
+[project.optional-dependencies]
+dev = ["ruff"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["luxmachina*"]
+
+[tool.setuptools-git-versioning]
+enabled = true
+dirty_template = "{tag}"
