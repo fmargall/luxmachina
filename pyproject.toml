@@ -38,7 +38,7 @@ Repository = "https://github.com/fmargall/luxmachina"
 Issues = "https://github.com/fmargall/luxmachina/issues"
 
 [project.optional-dependencies]
-dev = ["ruff"]
+dev = ["ruff", "pre-commit"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
