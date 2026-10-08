@@ -10,3 +10,6 @@
 *.npy binary
 *.npz binary
 *.exr binary
+
+# Let setuptools-scm read the version from git archives (GitHub, Zenodo)
+.git_archival.txt export-subst
