@@ -38,10 +38,14 @@ Repository = "https://github.com/fmargall/luxmachina"
 Issues = "https://github.com/fmargall/luxmachina/issues"
 
 [project.optional-dependencies]
-dev = ["ruff", "pre-commit"]
+test = ["pytest"]
+dev = ["ruff", "pre-commit", "pytest"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
 include = ["luxmachina*"]
 
 [tool.setuptools_scm]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
