@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools >= 77", "setuptools-git-versioning >= 2.0, < 3"]
+requires = ["setuptools >= 77", "setuptools-scm >= 8"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -44,6 +44,4 @@ dev = ["ruff", "pre-commit"]
 where = ["src"]
 include = ["luxmachina*"]
 
-[tool.setuptools-git-versioning]
-enabled = true
-dirty_template = "{tag}"
+[tool.setuptools_scm]
