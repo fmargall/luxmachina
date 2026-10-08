@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use Lux Machina in your research, please cite it as below."
+type: software
+title: "Lux Machina"
+abstract: >-
+  Differentiable GPU light tracer for optical system design and metrology,
+  built on NVIDIA Warp.
+authors:
+  - family-names: Margall
+    given-names: François
+    email: fr.margall@proton.me
+    orcid: "https://orcid.org/0009-0004-0585-087X"
+repository-code: "https://github.com/fmargall/luxmachina"
+url: "https://github.com/fmargall/luxmachina"
+license: AGPL-3.0-or-later
+keywords:
+  - differentiable rendering
+  - inverse rendering
+  - light tracing
+  - optics
+  - optical design
+  - NVIDIA Warp
