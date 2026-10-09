@@ -1,0 +1,30 @@
+version: 2
+updates:
+  # GitHub Actions used in .github/workflows (pinned by SHA, version in trailing comment)
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    # Wait a week before proposing a new release, so compromised versions get pulled first
+    cooldown:
+      default-days: 7
+    # Follow the gitmoji + Conventional Commits convention: "⬆️ ci: bump ..."
+    commit-message:
+      prefix: "⬆️ ci"
+    # Dependabot only opens PRs: nothing changes until one is merged.
+    # An action goes into the first group it matches, so order matters.
+    # Ungrouped updates (majors outside "artifacts") get one PR each,
+    # so their release notes can be reviewed on their own.
+    groups:
+      # upload-artifact and download-artifact must share the same major version,
+      # so they always move together, majors included. They only run in release.yml,
+      # which does not run on PRs: a green CI does not prove they work.
+      artifacts:
+        patterns:
+          - "actions/upload-artifact"
+          - "actions/download-artifact"
+      # Every other action: minor and patch updates are batched into a single PR
+      actions:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
