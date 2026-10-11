@@ -20,6 +20,8 @@ select = [
     "PTH",      # prefer pathlib over os.path
     "RUF",      # ruff-specific rules
     "D",        # pydocstyle
+    "ANN",      # flake8-annotations: require explicit signatures
+    "TC",       # flake8-type-checking: move typing-only imports under TYPE_CHECKING
 ]
 ignore = [
     "E501",     # line length is handled by the formatter
@@ -30,5 +32,13 @@ ignore = [
 [lint.pydocstyle]
 convention = "numpy"
 
+[lint.flake8-type-checking]
+# Quote annotations when moving an import under TYPE_CHECKING, so that
+# no `from __future__ import annotations` is needed
+quote-annotations = true
+# Warp reads these annotations at runtime: their imports must stay real.
+# Names are fully qualified, so `import warp as wp` is resolved too.
+runtime-evaluated-decorators = ["warp.kernel", "warp.func", "warp.struct"]
+
 [lint.per-file-ignores]
-"tests/**" = ["D"]
+"tests/**" = ["D", "ANN"]
