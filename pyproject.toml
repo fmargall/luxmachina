@@ -40,7 +40,9 @@ Issues = "https://github.com/fmargall/luxmachina/issues"
 
 [project.optional-dependencies]
 test = ["pytest"]
-dev = ["ruff", "pre-commit", "pytest"]
+# pyright is pinned: each release can add new errors, upgrades must be deliberate.
+# The "nodejs" extra ships Node.js as a wheel instead of downloading it at first run.
+dev = ["ruff", "pre-commit", "pytest", "pyright[nodejs]==1.1.414"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -50,3 +52,15 @@ include = ["luxmachina*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.pyright]
+# Tests are checked too: they are the first client of the public API
+include = ["src", "tests"]
+# Check against the oldest supported version, so newer syntax is rejected
+pythonVersion = "3.10"
+# Strict for the package; tests stay in standard mode, so that unannotated
+# test functions and fixtures are accepted (consistent with ANN in ruff.toml)
+typeCheckingMode = "standard"
+strict = ["src"]
+# Not part of strict mode: flag "# type: ignore" comments that no longer hide anything
+reportUnnecessaryTypeIgnoreComment = "error"

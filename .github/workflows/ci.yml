@@ -24,6 +24,25 @@ jobs:
         with:
           python-version: "3.x"
       - uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd # v3.0.1
+        env:
+          # pyright needs the project installed: it runs in the typecheck job
+          SKIP: pyright
+
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          # setuptools-scm needs the tags to compute the version at install time
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          # Oldest supported version, matching pythonVersion in [tool.pyright],
+          # so that dependencies are resolved as on that version
+          python-version: "3.10"
+      - run: python -m pip install -e ".[dev]"
+      - run: python -m pyright
 
   build:
     runs-on: ubuntu-latest

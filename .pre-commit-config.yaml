@@ -39,3 +39,17 @@ repos:
       - id: ruff
         args: [--fix]
       - id: ruff-format
+
+  # Type-check with the pyright of the project environment, not an isolated one,
+  # so that it sees the project dependencies (requires `pip install -e ".[dev]"`).
+  # Skipped in the CI lint job: the typecheck job runs it instead.
+  - repo: local
+    hooks:
+      - id: pyright
+        name: pyright
+        entry: pyright
+        language: unsupported
+        # Run only when Python files are staged, but always check the whole
+        # project: a change in one file can break types in another
+        types_or: [python, pyi]
+        pass_filenames: false
