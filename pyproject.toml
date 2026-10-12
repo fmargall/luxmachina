@@ -63,6 +63,7 @@ exclude_also = [
     # Warp compiles these to C++/CUDA: Python never executes their body
     '@wp\.(kernel|func|struct)',
 ]
+fail_under = 90
 
 [tool.pyright]
 # Tests are checked too: they are the first client of the public API
