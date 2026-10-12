@@ -88,3 +88,18 @@ jobs:
           files: coverage.xml
           disable_search: true
           fail_ci_if_error: true
+
+  # Single required status check for the main branch ruleset: it passes only
+  # if every job below succeeded, so the matrix can change without updating
+  # the ruleset. Any new job must be added to `needs`, or its failure will not
+  # block merging.
+  ci-passed:
+    # A job whose dependency failed is skipped, and a skipped required check
+    # counts as passing: always() makes it run and report the real outcome
+    if: always()
+    needs: [lint, typecheck, build, tests]
+    runs-on: ubuntu-latest
+    steps:
+      # A cancelled job proved nothing, so it fails the check too
+      - if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1
