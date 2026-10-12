@@ -39,10 +39,10 @@ Repository = "https://github.com/fmargall/luxmachina"
 Issues = "https://github.com/fmargall/luxmachina/issues"
 
 [project.optional-dependencies]
-test = ["pytest"]
+test = ["pytest", "pytest-cov"]
 # pyright is pinned: each release can add new errors, upgrades must be deliberate.
 # The "nodejs" extra ships Node.js as a wheel instead of downloading it at first run.
-dev = ["ruff", "pre-commit", "pytest", "pyright[nodejs]==1.1.414"]
+dev = ["ruff", "pre-commit", "pytest", "pytest-cov", "pyright[nodejs]==1.1.414"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -52,6 +52,18 @@ include = ["luxmachina*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.coverage.run]
+branch = true
+source = ["luxmachina"]
+
+[tool.coverage.report]
+show_missing = true
+exclude_also = [
+    # Warp compiles these to C++/CUDA: Python never executes their body
+    '@wp\.(kernel|func|struct)',
+]
+fail_under = 90
 
 [tool.pyright]
 # Tests are checked too: they are the first client of the public API
