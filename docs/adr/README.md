@@ -10,3 +10,4 @@ number, fill it in, add it to the table below and open a pull request.
 | ADR | Title | Status |
 | --- | --- | --- |
 | [0001](0001-record-architecture-decisions.md) | Record architecture decisions in the repository with a MADR-based template | Accepted |
+| [0002](0002-trace-rays-as-a-non-sequential-wavefront.md) | Trace rays as a non-sequential wavefront, one bounce at a time, without self-intersection epsilon | Accepted |
