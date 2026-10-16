@@ -57,6 +57,11 @@ include = ["luxmachina*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+addopts = ["-ra", "--strict-markers", "--strict-config"]
+xfail_strict = true
+markers = [
+    "gpu: requires a CUDA device (skipped when none is available)",
+]
 
 [tool.coverage.run]
 branch = true
