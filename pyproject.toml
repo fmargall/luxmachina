@@ -37,6 +37,7 @@ requires-python = ">=3.10"
 Homepage = "https://github.com/fmargall/luxmachina"
 Repository = "https://github.com/fmargall/luxmachina"
 Issues = "https://github.com/fmargall/luxmachina/issues"
+Changelog = "https://github.com/fmargall/luxmachina/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 test = ["pytest", "pytest-cov"]
