@@ -1,0 +1,21 @@
+# Settings of the "New issue" chooser page
+# https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/configuring-issue-templates-for-your-repository#configuring-the-template-chooser
+
+# Every issue must start from one of the forms in this folder, so that it
+# contains the information needed to act on it
+blank_issues_enabled: false
+
+contact_links:
+  # Questions are not actionable tasks: keep them out of the issue tracker
+  # (Discussions must be enabled in Settings > General > Features). A
+  # discussion can be converted to an issue if it turns out to be a bug
+  - name: Ask a question
+    url: https://github.com/fmargall/luxmachina/discussions/categories/q-a
+    about: Usage questions and help go to GitHub Discussions.
+
+  # Vulnerabilities must never be reported in a public issue. This opens a
+  # private security advisory instead ("Private vulnerability reporting" must be
+  # enabled in Settings > Security)
+  - name: Report a security vulnerability
+    url: https://github.com/fmargall/luxmachina/security/advisories/new
+    about: Please report vulnerabilities privately, not in a public issue.

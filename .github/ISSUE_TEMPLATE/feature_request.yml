@@ -1,0 +1,53 @@
+# Issue form syntax:
+# https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-issue-forms
+name: ✨ Feature request
+description: Suggest a new feature or an improvement to an existing one.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting an improvement! Describing the problem you face
+        matters more than the solution you have in mind: there may be another
+        way to solve it. Open-ended ideas can first be discussed in
+        [Discussions](https://github.com/fmargall/luxmachina/discussions).
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched the [existing issues](https://github.com/fmargall/luxmachina/issues?q=is%3Aissue) and found no duplicate.
+          required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: |
+        What are you trying to do, and why is it hard or impossible today?
+        For example: "I want to optimize the curvature of a lens, but …".
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: |
+        What would you like to happen? A sketch of the API in a code block is
+        welcome.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Other solutions or workarounds you tried, and why they fall short.
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: References (papers, other libraries), use cases, screenshots.
