@@ -12,4 +12,4 @@ number, fill it in, add it to the table below and open a pull request.
 | [0001](0001-record-architecture-decisions.md) | Record architecture decisions in the repository with a MADR-based template | Accepted |
 | [0002](0002-trace-rays-as-a-non-sequential-wavefront.md) | Trace rays as a non-sequential wavefront, one bounce at a time, without self-intersection epsilon | Accepted |
 | [0003](0003-define-the-ray-state.md) | Define the ray state for spectral, phase-aware and path-aware tracing, with a configurable precision | Accepted |
-| [0004](0004-fix-units-frames-and-sign-conventions.md) | Express lengths in meters and describe surfaces in local frames with signed curvatures | Proposed |
+| [0004](0004-fix-units-frames-and-sign-conventions.md) | Express lengths in meters and describe surfaces in local frames with signed curvatures | Accepted |
