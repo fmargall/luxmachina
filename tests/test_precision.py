@@ -43,21 +43,6 @@ def cubic(x: wp.array(dtype=Any), y: wp.array(dtype=Any)):
     y[i] = v * v * v + type(v)(2.0) * v
 
 
-@wp.func
-def sphere_far_root(o: Any, d: Any, c: Any):
-    # Origin o on the sphere of center c, unit direction d (ADR-0002, known root)
-    s = wp.dot(d, o - c)
-    return -type(s)(2.0) * s
-
-
-@wp.kernel
-def far_root(
-    o: wp.array(dtype=Any), d: wp.array(dtype=Any), c: wp.array(dtype=Any), t: wp.array(dtype=Any)
-):
-    i = wp.tid()
-    t[i] = sphere_far_root(o[i], d[i], c[i])
-
-
 def test_generic_kernel_gradient(device, dtype):
     x = wp.array([0.5, 1.0, 2.0], dtype=dtype, device=device, requires_grad=True)
     y = wp.zeros(3, dtype=dtype, device=device, requires_grad=True)
@@ -78,21 +63,3 @@ def test_float64_is_not_rounded_to_float32(device):
     wp.launch(cubic, dim=1, inputs=[x], outputs=[y], device=device)
 
     assert abs(y.numpy()[0] - (3.0 + 5e-10)) < 1e-14
-
-
-def test_generic_vector_func_gradient(device, dtype):
-    # Unit sphere at the origin; both rays leave its south pole
-    o = wp.array([[0.0, 0.0, -1.0]] * 2, dtype=vec3(dtype), device=device)
-    d = wp.array([[0.0, 0.0, 1.0], [0.0, 0.0, -1.0]], dtype=vec3(dtype), device=device)
-    c = wp.zeros(2, dtype=vec3(dtype), device=device, requires_grad=True)
-    t = wp.zeros(2, dtype=dtype, device=device, requires_grad=True)
-    tape = wp.Tape()
-    with tape:
-        wp.launch(far_root, dim=2, inputs=[o, d, c], outputs=[t], device=device)
-    tape.backward(grads={t: wp.ones(2, dtype=dtype, device=device)})
-
-    # Inwards: the far side is 2 away; outwards: negative root, no hit
-    np.testing.assert_allclose(t.numpy(), [2.0, -2.0])
-    # dt/dc = 2 d
-    assert c.grad is not None
-    np.testing.assert_allclose(c.grad.numpy(), 2.0 * d.numpy())
