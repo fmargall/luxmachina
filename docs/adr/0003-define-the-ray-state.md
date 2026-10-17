@@ -1,5 +1,5 @@
 ---
-status: proposed
+status: accepted
 date: 2026-10-16
 decision-makers: François Margall
 ---
@@ -97,7 +97,7 @@ Each ray carries the following fields, each stored as its own Warp array:
 | `opl` | real | optical path length from the source, the sum of `n · t` over the segments |
 | `medium` | integer | index of the material the ray travels in |
 | `surface` | integer | index of the surface the ray leaves, `-1` at the source (see ADR-0002) |
-| `status` | integer | alive, absorbed, escaped from the scene or recorded |
+| `status` | integer | inactive (never emitted, or padding of the last batch), alive, absorbed, escaped from the scene or recorded; inactive is `0`, the value of a new buffer |
 
 - **The depth is not stored**: it is the index of the buffer the ray lives in.
 - Lengths, including the wavelength and the optical path, are expressed in the
