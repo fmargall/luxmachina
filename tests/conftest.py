@@ -6,6 +6,8 @@
 import pytest
 import warp as wp
 
+from luxmachina._precision import REALS
+
 # Show warnings and errors only: hides the banner printed at initialization
 wp.config.log_level = wp.LOG_WARNING
 wp.init()
@@ -19,7 +21,7 @@ def device(request):
     return wp.get_device(request.param)
 
 
-@pytest.fixture(params=[wp.float32, wp.float64], ids=["float32", "float64"])
+@pytest.fixture(params=REALS, ids=[real.__name__ for real in REALS])
 def dtype(request):
     """Real type of a trace (ADR-0003: the precision is a parameter)."""
     return request.param
