@@ -32,6 +32,10 @@ readme = "README.md"
 license = "AGPL-3.0-or-later"
 license-files = ["LICENSE.txt"]
 requires-python = ">=3.10"
+dependencies = [
+    "numpy",
+    "warp-lang>=1.18",
+]
 
 [project.urls]
 Homepage = "https://github.com/fmargall/luxmachina"
@@ -53,6 +57,11 @@ include = ["luxmachina*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+addopts = ["-ra", "--strict-markers", "--strict-config"]
+xfail_strict = true
+markers = [
+    "gpu: requires a CUDA device (skipped when none is available)",
+]
 
 [tool.coverage.run]
 branch = true

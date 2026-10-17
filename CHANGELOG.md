@@ -9,4 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- NVIDIA Warp (`warp-lang>=1.18`) and NumPy as runtime dependencies.
+
 [Unreleased]: https://github.com/fmargall/luxmachina/commits/main
