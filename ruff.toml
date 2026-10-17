@@ -27,6 +27,7 @@ ignore = [
     "E501",     # line length is handled by the formatter
     "D105",     # magic methods do not need docstrings
     "D107",     # __init__ is documented at class level
+    "ANN401",   # typing.Any is how Warp marks the generic parameters of kernels
 ]
 
 [lint.pydocstyle]
