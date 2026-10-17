@@ -9,7 +9,7 @@ import numpy as np
 import pytest
 import warp as wp
 
-from luxmachina._precision import REALS, check_real, vec3
+from luxmachina._precision import REALS, check_real, mat33, vec3
 
 
 def test_single_precision_is_the_default():
@@ -29,6 +29,16 @@ def test_check_real_rejects_other_types(real):
 def test_vec3_matches_the_precision():
     assert vec3(wp.float32) is wp.vec3f
     assert vec3(wp.float64) is wp.vec3d
+
+
+def test_mat33_matches_the_precision():
+    assert mat33(wp.float32) is wp.mat33f
+    assert mat33(wp.float64) is wp.mat33d
+
+
+def test_mat33_rejects_unsupported_types():
+    with pytest.raises(TypeError, match="unsupported real type"):
+        mat33(float)
 
 
 # The tests below check Warp itself: a generic kernel is specialized, runs and

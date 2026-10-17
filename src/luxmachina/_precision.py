@@ -14,6 +14,8 @@ import warp as wp
 
 # Supported real types and their 3-vector type, single precision (the default) first
 _VEC3: dict[type, type] = {wp.float32: wp.vec3f, wp.float64: wp.vec3d}
+# Their 3x3 matrix type
+_MAT33: dict[type, type] = {wp.float32: wp.mat33f, wp.float64: wp.mat33d}
 
 #: Real types a trace can use, single precision (the default) first.
 REALS: tuple[type, ...] = tuple(_VEC3)
@@ -30,3 +32,8 @@ def check_real(real: type) -> type:
 def vec3(real: type) -> type:
     """Return the Warp 3-vector type of the real type `real` (vec3f or vec3d)."""
     return _VEC3[check_real(real)]
+
+
+def mat33(real: type) -> type:
+    """Return the Warp 3x3 matrix type of the real type `real` (mat33f or mat33d)."""
+    return _MAT33[check_real(real)]
