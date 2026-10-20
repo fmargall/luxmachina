@@ -1,0 +1,20 @@
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 1%
+    patch:
+      default:
+        # Same threshold as fail_under in [tool.coverage.report] of pyproject.toml
+        target: 90%
+
+codecov:
+  notify:
+    # Wait for the uploads of all the runs of the tests job of ci.yml. Computed
+    # from the Python versions by the template: `copier update` keeps it in sync
+    after_n_builds: 4
+
+comment:
+  # Same as codecov.notify.after_n_builds
+  after_n_builds: 4

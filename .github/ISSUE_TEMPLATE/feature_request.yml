@@ -1,0 +1,17 @@
+name: Feature request
+description: "Suggest a new feature or an improvement of Lux Machina."
+labels: [enhancement]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Feature description
+      description: What you would like, and the need behind it.
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Examples, alternatives you have considered, or references to papers or other tools.

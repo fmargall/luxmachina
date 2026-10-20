@@ -1,0 +1,77 @@
+# `language: unsupported` (local pyright hook) requires pre-commit 4.4.0
+minimum_pre_commit_version: "4.4.0"
+
+repos:
+  # Generic file hygiene
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-yaml
+      - id: check-toml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+        # Keep two trailing spaces in Markdown (hard line break)
+        args: [--markdown-linebreak-ext=md]
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: check-added-large-files
+        args: [--maxkb=1024]
+
+  # Enforce .editorconfig rules on every file
+  - repo: https://github.com/editorconfig-checker/editorconfig-checker.python
+    rev: 3.11.1
+    hooks:
+      - id: editorconfig-checker
+        # The license and code of conduct texts are kept verbatim and must not be reformatted
+        exclude: ^(LICENSE\.txt|CODE_OF_CONDUCT\.md)$
+
+  # Find common misspellings in code, comments, docstrings and documentation. It
+  # only reports them: a word it does not know can be allowed with
+  # --ignore-words-list=word1,word2 in args
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.3
+    hooks:
+      - id: codespell
+        # Verbatim texts, and the hashes of the lock file
+        exclude: ^(LICENSE\.txt|CODE_OF_CONDUCT\.md|uv\.lock)$
+
+  # Audit the GitHub Actions workflows, dependabot.yml and this file for security
+  # issues (template injection, excessive permissions, unpinned actions...)
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    rev: v1.31.1
+    hooks:
+      - id: zizmor
+
+  # Insert the SPDX license header at the top of every Python file
+  - repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: v1.5.6
+    hooks:
+      - id: insert-license
+        files: \.py$
+        args:
+          - --license-filepath=.license-header.txt
+          - --comment-style=#
+
+  # Lint first (with autofix), then format
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.17.1
+    hooks:
+      - id: ruff-check
+        # --show-fixes lists what --fix changed, for review before the next commit
+        args: [--fix, --show-fixes]
+      - id: ruff-format
+
+  # Type-check with the pyright of the project environment, not an isolated one,
+  # so that it sees the project dependencies. `uv run` finds that environment even
+  # when it is not activated, and --frozen leaves uv.lock untouched.
+  # Skipped in the CI lint job: the typecheck job runs it instead.
+  - repo: local
+    hooks:
+      - id: pyright
+        name: pyright
+        entry: uv run --frozen pyright
+        language: unsupported
+        # Run only when Python files are staged, but always check the whole
+        # project: a change in one file can break types in another
+        types_or: [python, pyi]
+        pass_filenames: false

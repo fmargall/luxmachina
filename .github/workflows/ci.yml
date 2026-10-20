@@ -1,0 +1,119 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  # Called by release.yml before publishing anything
+  workflow_call:
+  # Run by hand from the Actions tab, for example to check a branch again after
+  # a dependency release, without pushing anything
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.x"
+      - uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd # v3.0.1
+        env:
+          # pyright needs the project installed: it runs in the typecheck job
+          SKIP: pyright
+
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # setuptools-scm needs the tags to compute the version at install time
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          # Oldest supported version, matching pythonVersion in [tool.pyright],
+          # so that dependencies are resolved as on that version
+          python-version: "3.13"
+      # --locked fails if uv.lock is out of date with pyproject.toml
+      - run: uv sync --locked
+      # --no-sync: uv run would otherwise sync the environment again
+      - run: uv run --no-sync pyright
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+      - run: uv build
+      - run: uvx twine check --strict dist/*
+
+  tests:
+    runs-on: ubuntu-latest
+    # id-token lets the Codecov upload authenticate with a short-lived OIDC token
+    # instead of a stored secret. Job-level permissions replace the workflow-level
+    # ones, so contents: read must be granted again here.
+    permissions:
+      contents: read
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        # From python_min_version of .copier-answers.yml to the newest Python
+        # release: `copier update` adds each new release.
+        # Each run uploads a coverage report: after_n_builds of .github/codecov.yml is
+        # computed from this matrix by the template, and updated along with it.
+        python-version: ["3.13", "3.14", "3.15"]
+        deps: [locked]
+        include:
+          # The locked versions hide the breaking releases of the dependencies:
+          # one more run with their newest versions catches them before the users
+          - python-version: "3.15"
+            deps: latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - if: matrix.deps == 'locked'
+        run: uv sync --locked --no-default-groups --group test
+      - if: matrix.deps == 'latest'
+        run: uv sync --upgrade --no-default-groups --group test
+      - run: uv run --no-sync pytest --cov --cov-report=term --cov-report=xml
+      - uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+        with:
+          use_oidc: true
+          files: coverage.xml
+          disable_search: true
+          fail_ci_if_error: true
+
+  # Single required status check for the main branch ruleset: it passes only
+  # if every job below succeeded, so the matrix can change without updating
+  # the ruleset. Any new job must be added to `needs`, or its failure will not
+  # block merging.
+  ci-passed:
+    # A job whose dependency failed is skipped, and a skipped required check
+    # counts as passing: always() makes it run and report the real outcome
+    if: always()
+    needs: [lint, typecheck, build, tests]
+    runs-on: ubuntu-latest
+    steps:
+      # A cancelled job proved nothing, so it fails the check too
+      - if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1

@@ -1,0 +1,97 @@
+[build-system]
+requires = ["setuptools >= 77", "setuptools-scm >= 8"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "luxmachina"
+dynamic = ["version"]
+description = "Differentiable GPU light tracer for optical system design and metrology, built on NVIDIA Warp."
+authors = [
+    { name = "François Margall", email = "fr.margall@proton.me" },
+]
+keywords = [
+    "python",
+    "gpu",
+    "ray-tracing",
+    "differentiable-rendering",
+    "inverse-rendering",
+    "light-tracing",
+    "nvidia-warp",
+    "optical-design",
+    "optics",
+]
+# Add the "Intended Audience" and "Topic" classifiers of the project:
+# https://pypi.org/classifiers/
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Typing :: Typed",
+]
+readme = "README.md"
+license = "AGPL-3.0-or-later"
+license-files = ["LICENSE.txt"]
+requires-python = ">=3.13"
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/fmargall/luxmachina"
+Repository = "https://github.com/fmargall/luxmachina"
+Issues = "https://github.com/fmargall/luxmachina/issues"
+Changelog = "https://github.com/fmargall/luxmachina/blob/main/CHANGELOG.md"
+
+# Optional features for users go in extras, published with the package and
+# installed with `pip install luxmachina[name]`, e.g.:
+# [project.optional-dependencies]
+# ui = ["PySide6"]
+
+# Tools for contributors go in dependency groups (PEP 735): they are not published,
+# and are installed with `uv sync` (or `pip install -e . --group dev`, pip >= 25.1)
+[dependency-groups]
+test = ["pytest", "pytest-cov"]
+# pyright is pinned: each release can add new errors, upgrades must be deliberate.
+# The "nodejs" extra ships Node.js as a wheel instead of downloading it at first run.
+dev = [
+    { include-group = "test" },
+    "ruff",
+    "pre-commit",
+    "pyright[nodejs]==1.1.414",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["luxmachina*"]
+
+[tool.setuptools_scm]
+
+[tool.pytest.ini_options]
+# An older pytest fails clearly instead of ignoring the options it does not know
+minversion = "9.0"
+testpaths = ["tests"]
+addopts = ["-ra", "--strict-markers", "--strict-config"]
+xfail_strict = true
+# Warnings are errors: a deprecation in a dependency fails the tests while there
+# is still time to adapt, instead of scrolling by unread. An expected warning is
+# allowed by adding an "ignore:..." filter after "error".
+filterwarnings = ["error"]
+# Shown with the output of a failing test only
+log_level = "INFO"
+
+[tool.coverage.run]
+branch = true
+source = ["luxmachina"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 90
+
+[tool.pyright]
+# Tests are checked too: they are the first client of the public API. So are the
+# scripts of the repository, such as the release script
+include = ["src", "tests", "scripts"]
+# Check against the oldest supported version, so newer syntax is rejected
+pythonVersion = "3.13"
+typeCheckingMode = "standard"
+# Not part of strict mode: flag "# type: ignore" comments that no longer hide anything
+reportUnnecessaryTypeIgnoreComment = "error"

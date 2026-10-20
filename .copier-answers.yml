@@ -1,0 +1,31 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: v0.1.0
+_src_path: gh:fmargall/scientific-python-template
+author_email: fr.margall@proton.me
+author_family_names: Margall
+author_given_names: François
+author_orcid: https://orcid.org/0009-0004-0585-087X
+conduct_email: fr.margall@proton.me
+copyright_holder: François Margall
+copyright_year: '2026'
+creation_date: '2026-10-20'
+distribution_name: luxmachina
+homepage_url: https://github.com/fmargall/luxmachina
+keywords:
+- python
+- gpu
+- ray-tracing
+- differentiable-rendering
+- inverse-rendering
+- light-tracing
+- nvidia-warp
+- optical-design
+- optics
+license: AGPL-3.0-or-later
+package_name: luxmachina
+project_description: Differentiable GPU light tracer for optical system design and
+    metrology, built on NVIDIA Warp.
+project_name: Lux Machina
+python_min_version: '3.13'
+repository_url: https://github.com/fmargall/luxmachina
+use_codecov: true

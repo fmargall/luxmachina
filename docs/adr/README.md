@@ -1,0 +1,12 @@
+# Architecture decision records
+
+This folder records the significant decisions taken for Lux Machina, the context
+in which they were taken and the options that were rejected. The process is
+described in [ADR-0001](0001-record-architecture-decisions.md).
+
+To propose a new decision, copy [`template.md`](template.md) to the next free
+number, fill it in, add it to the table below and open a pull request.
+
+| ADR | Title | Status |
+| --- | --- | --- |
+| [0001](0001-record-architecture-decisions.md) | Record architecture decisions in the repository with a MADR-based template | Accepted |

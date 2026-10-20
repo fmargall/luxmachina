@@ -1,0 +1,17 @@
+name: Question
+description: "Ask a question about the usage of Lux Machina."
+labels: [question]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: What you would like to know.
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What you are trying to achieve, what you have already tried, and the versions you use.

@@ -1,0 +1,20 @@
+name: Bug report
+description: "Report something in Lux Machina that does not work as expected."
+labels: [bug]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug description
+      description: >-
+        What happens, and what you expected instead. A short example reproducing it and the
+        full error message help a lot, if you have them.
+    validations:
+      required: true
+
+  - type: textarea
+    id: system
+    attributes:
+      label: System information
+      description: "Versions of Lux Machina and Python, and operating system."
+      placeholder: "Lux Machina 0.1.0, Python 3.13, Ubuntu 24.04"

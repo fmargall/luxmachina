@@ -1,0 +1,8 @@
+# Settings of the "New issue" chooser page
+# https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/configuring-issue-templates-for-your-repository#configuring-the-template-chooser
+
+# The forms of this folder cover the usual cases (bugs, features, questions,
+# documentation), but a blank issue stays available for anything they do not fit.
+# The link to report a security vulnerability privately is added by GitHub itself,
+# from SECURITY.md
+blank_issues_enabled: true

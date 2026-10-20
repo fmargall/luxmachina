@@ -1,0 +1,129 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions: {}
+
+jobs:
+  ci:
+    # "$/": the self-repository syntax always loads the workflow of this repository
+    # at the same commit, never a file of the workspace (unlike "./")
+    uses: $/.github/workflows/ci.yml
+    permissions:
+      contents: read
+      # The tests job of the CI uploads the coverage with an OIDC token
+      id-token: write
+
+  # A forgotten `scripts/release.py prepare` fails the release here, before
+  # anything is published: the changelog must have a section for the tag, and
+  # CITATION.cff its version and date. Pre-releases (a, b, rc) are not checked.
+  changelog:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # The script only needs the standard library: the Python of the runner is enough
+      - run: |
+          if [[ "$GITHUB_REF_NAME" =~ (a|b|rc)[0-9]+$ ]]; then exit 0; fi
+          python3 scripts/release.py check "$GITHUB_REF_NAME"
+
+  build:
+    needs: [ci, changelog]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          # A cache restored in a release job could inject altered packages into
+          # the published distributions: build from a clean environment
+          enable-cache: false
+      - run: uv build
+      - run: uvx twine check --strict dist/*
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: dist
+          path: dist/
+
+  publish-testpypi:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/project/luxmachina/
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          skip-existing: true
+
+  publish-pypi:
+    needs: publish-testpypi
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/luxmachina/
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
+
+  github-release:
+    needs: publish-pypi
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      # The notes of the release come from CHANGELOG.md. Checked out first: the
+      # checkout empties the working directory
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: dist
+          path: dist/
+      - uses: sigstore/gh-action-sigstore-python@790bc6befb9d733738f18d8f895854b453640ec9 # v3.5.0
+        with:
+          inputs: >-
+            ./dist/*.tar.gz
+            ./dist/*.whl
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          # Passed through the environment, never interpolated in the script
+          PROJECT_NAME: "Lux Machina"
+        # The changelog section of the version becomes the notes of the release,
+        # and the description of its Zenodo record. Pre-releases have no section:
+        # their notes are generated from the merged pull requests instead
+        run: |
+          if [[ "$GITHUB_REF_NAME" =~ (a|b|rc)[0-9]+$ ]]; then
+            flags=(--prerelease --generate-notes)
+          else
+            python3 scripts/release.py notes "$GITHUB_REF_NAME" > "$RUNNER_TEMP/notes.md"
+            flags=(--notes-file "$RUNNER_TEMP/notes.md")
+          fi
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "$PROJECT_NAME ${GITHUB_REF_NAME#v}" \
+            --verify-tag \
+            "${flags[@]}"

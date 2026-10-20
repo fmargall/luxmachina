@@ -1,0 +1,71 @@
+# Version updates of the dependencies, opened as pull requests by Dependabot
+# https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference
+#
+# Dependabot only opens PRs: nothing changes until one is merged.
+# In each ecosystem, an update goes into the first group it matches, so order
+# matters. Ungrouped updates (majors, unless stated otherwise) get one PR each,
+# so their release notes can be reviewed on their own.
+version: 2
+updates:
+  # GitHub Actions used in .github/workflows (pinned by SHA, version in trailing comment)
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    # Wait a week before proposing a new release, so compromised versions get pulled first
+    cooldown:
+      default-days: 7
+    # Follow the gitmoji + Conventional Commits convention: "⬆️ ci: bump ..."
+    commit-message:
+      prefix: "⬆️ ci"
+    groups:
+      # upload-artifact and download-artifact must share the same major version,
+      # so they always move together, majors included. They only run in release.yml,
+      # which does not run on PRs: a green CI does not prove they work.
+      artifacts:
+        patterns:
+          - "actions/upload-artifact"
+          - "actions/download-artifact"
+      # Every other action: minor and patch updates are batched into a single PR
+      actions:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  # Python dependencies of pyproject.toml, and their locked versions in uv.lock
+  - package-ecosystem: "uv"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    # Wait a week before proposing a new release, so compromised versions get pulled first
+    cooldown:
+      default-days: 7
+    # Follow the gitmoji + Conventional Commits convention: "⬆️ build: bump ..."
+    commit-message:
+      prefix: "⬆️ build"
+    groups:
+      # Every dependency: minor and patch updates are batched into a single PR.
+      # This includes pyright, pinned in pyproject.toml: its PR is where a new
+      # release, which can add new errors, is deliberately accepted.
+      python:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  # Hooks of .pre-commit-config.yaml (rev of each hook repository)
+  - package-ecosystem: "pre-commit"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    # Wait a week before proposing a new release, so compromised versions get pulled first
+    cooldown:
+      default-days: 7
+    # Follow the gitmoji + Conventional Commits convention: "⬆️ chore: bump ..."
+    commit-message:
+      prefix: "⬆️ chore"
+    groups:
+      # Every hook: minor and patch updates are batched into a single PR
+      hooks:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
